@@ -113,22 +113,26 @@ print(total_spent(start=None, end='2018-01-01'))
 #print(df.groupby(df.index.year).count())
 
 # Create a new dataframe grouped by year and calculate aggregate functions:
-
 df_annual = df.groupby(df.index.year).agg(
         {'Total':['count', 'sum'],
          'Litres':['count', 'sum'],
          'Price_pL':['count', 'mean'],
          }
         )
+# Rename the index as 'Year':
+df_annual.index.rename('Year', inplace=True)
 
 print(df_annual)
 
+# Create a new dataframe grouped by year and month and calculate aggregate functions:
 df_monthly = df.groupby([df.index.year, df.index.month]).agg(
         {'Total':['count', 'sum'],
          'Litres':['count', 'sum'],
          'Price_pL':['count', 'mean'],
          }
         )
+# Rename the mulit-level index as 'Year' and 'Month':
+df_monthly.index.rename(['Year','Month'], inplace=True)
 
 print(df_monthly)
 
@@ -179,8 +183,9 @@ on trips like Bball/Lydney/etc.
 7. use DataFrame.round(decimals=2) to round columns to 2 dp 
 (provide a dict to specify dp for each column)
 
-8. Create a df with annual totals (use '2014-01-01':2014-12-31' and iterate per year)
-and also monthly totals. Gonna need to aggregate totals (and litres and mean price)
+8. Find out how best to rename heirarchical columns (count, sum, etc),
+especially given dictionary-of-dictionaries- method is deprecated.
+Does the method used in explore.py still work? why doesn't it work here?
 
 
 """
