@@ -40,6 +40,9 @@ print(type(df.date[0])) # Returns pandas._libs.tslibs.timestamps.Timestamp
 # Remove old 'Date' column and set new Timestamp date column as index.
 df.drop(['Date'], axis=1, inplace=True)
 df = df.set_index('date')
+
+print(type(df.index)) # Returns pandas.core.indexes.datetimes.DatetimeIndex
+print(df.index) # Inspect the index 
 print(df.head())
 
 # %% Sort data:
@@ -48,7 +51,12 @@ print(df.head())
 # (but still best to sort the data first, because the index stays in whatever 
 # order the data came in!!!)
 
-df.index = df.index.sort_values()
+#df.index = df.index.sort_values()
+
+# Or, alternatively:
+
+df.sort_index(inplace=True)
+
 
 # %% Count nulls:
 
@@ -136,6 +144,11 @@ df_monthly.index.rename(['Year','Month'], inplace=True)
 
 print(df_monthly)
 
+# %% Write to Excel:
+#
+#df_annual.to_excel("fuel_annual.xlsx")
+#df_monthly.to_excel("fuel_monthly.xlsx")
+
 # %% TO DO:
 
 """
@@ -178,7 +191,7 @@ on trips like Bball/Lydney/etc.
 
 5. Do some string formatting to make outputs look nice
 
-6. Allow read/write to/from Excel.
+6. Allow read/write to/from Excel --> lookup how to write to multiple sheets.
 
 7. use DataFrame.round(decimals=2) to round columns to 2 dp 
 (provide a dict to specify dp for each column)
