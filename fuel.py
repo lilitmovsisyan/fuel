@@ -73,6 +73,7 @@ print(round(df.Total.sum(), 2))
 print(round(df.Litres.sum(), 2))
 print(round(df.Price_pL.mean(), 2))
 
+# %% Calculate total for any date slice:
 """
 #NB: This function uses defaults of start=None and end=None for good reason:
  df[:] returns the entire set.
@@ -105,6 +106,31 @@ print(total_spent('2014-12-12','2016-02-08'))
 print(total_spent(start='2018-01-01', end=None))
 print(total_spent(start=None, end='2018-01-01'))
 
+
+# %% Group by month/year and Aggregate functions:
+
+# Group by year and see how many entries in each column per year:
+#print(df.groupby(df.index.year).count())
+
+# Create a new dataframe grouped by year and calculate aggregate functions:
+
+df_annual = df.groupby(df.index.year).agg(
+        {'Total':['count', 'sum'],
+         'Litres':['count', 'sum'],
+         'Price_pL':['count', 'mean'],
+         }
+        )
+
+print(df_annual)
+
+df_monthly = df.groupby([df.index.year, df.index.month]).agg(
+        {'Total':['count', 'sum'],
+         'Litres':['count', 'sum'],
+         'Price_pL':['count', 'mean'],
+         }
+        )
+
+print(df_monthly)
 
 # %% TO DO:
 
@@ -152,5 +178,9 @@ on trips like Bball/Lydney/etc.
 
 7. use DataFrame.round(decimals=2) to round columns to 2 dp 
 (provide a dict to specify dp for each column)
+
+8. Create a df with annual totals (use '2014-01-01':2014-12-31' and iterate per year)
+and also monthly totals. Gonna need to aggregate totals (and litres and mean price)
+
 
 """
