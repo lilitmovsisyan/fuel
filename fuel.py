@@ -118,7 +118,14 @@ print(total_spent(start=None, end='2018-01-01'))
 # %% Group by month/year and Aggregate functions:
 
 # Group by year and see how many entries in each column per year:
-#print(df.groupby(df.index.year).count())
+
+# .count() returns a DataFrame with the number of entries for each column in each group:
+print(df.groupby(df.index.year).count())
+print(df.groupby([df.index.year, df.index.month]).count())
+
+# .size() returns a Series with the number of rows in each group:
+print(df.groupby(df.index.year).size()) 
+print(df.groupby([df.index.year, df.index.month]).size())
 
 # Create a new dataframe grouped by year and calculate aggregate functions:
 df_annual = df.groupby(df.index.year).agg(
@@ -143,6 +150,63 @@ df_monthly = df.groupby([df.index.year, df.index.month]).agg(
 df_monthly.index.rename(['Year','Month'], inplace=True)
 
 print(df_monthly)
+
+# %% Get Monthly Average per year:
+
+#(i.e. not average in each month where some spending occurred, because there 
+#were some months where no fuel was bought. That would be the following):
+avg_spent_per_month = df.groupby([df.index.year]).Total.mean()
+
+
+#Instead, we want the annual total divided by 12:
+
+annual_totals = df.groupby([df.index.year]).Total.sum()
+# then add a column dividing this result by 12. REMEMBER though, this is a Series object.
+
+#Convert back to DataFrame (also automatically returns the column name):
+annual_totals = annual_totals.to_frame()
+# create a DataFrame with annual_totals as a column and another column dividing this by 12:
+annual_totals['Monthly_avg'] = (annual_totals.Total)/12
+#-----
+# OK THIS WORKED! I'm gonna try again but this time combine both monthly average methods:
+#-----
+
+
+def monthly_avg():
+    return lambda x: x.sum()/12
+
+annual_totals2 = df.groupby([df.index.year]).agg(['sum', 'mean', monthly_avg()])
+
+#inspect column names:
+print(annual_totals2.columns.levels[1])
+# somehow need to rename the '<lambda>' column!!!!!!!!!!
+annual_totals2.rename(level=1, columns={'mean':'mean_per_month', '<lambda>': 'monthly_avg'})
+# WHY DOESN'T THIS WORK?? No error is given, but the column is not renamed.
+
+print(annual_totals2)
+
+### Could also try doing 2 separate DataFrames, one each for Totals, Litres, Price,
+#and here have the month mean and monthly average together
+#Could also calculate mean when grouped by month (this would be a separate dataFrame)
+annual_total_spend = df.groupby(df.index.year).agg({'Total':['sum','mean', monthly_avg()]})
+annual_litres = df.groupby(df.index.year).agg({'Litres':['sum', 'mean', monthly_avg()]})
+annual_prices = df.groupby(df.index.year).agg({'Price_pL':['sum', 'mean', monthly_avg()]})
+
+print(annual_total_spend)
+print(annual_litres)
+print(annual_prices)
+
+#DRAFT
+##or maybe:
+#monthly_totals = df.groupby([df.index.year, df.index.month]).Total.sum()
+##monthly_totals.index.rename(['Year', 'Month'], inplace=True)
+#monthly_totals = monthly_totals.unstack()
+#avg_per_month = monthly_totals.agg('mean', axis=1) # This takes mean per row, not column (axis=0)
+#print(avg_per_month) # BUT uh oh, this average did not take into account the NaN!!! 
+##Maybe replace them with 0s, or see if there is a way to get mean including no. of NaN??
+
+
+
 
 # %% Write to Excel:
 #
