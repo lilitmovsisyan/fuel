@@ -37,13 +37,24 @@ df['date'] = pd.to_datetime(df['Date'], dayfirst=True)
 print(df.head())
 print(type(df.date[0])) # Returns pandas._libs.tslibs.timestamps.Timestamp
 
-# Remove old 'Date' column and set new Timestamp date column as index.
-df.drop(['Date'], axis=1, inplace=True)
+# Set new Timestamp date column as index.
 df = df.set_index('date')
+
+
+# Remove old 'Date' column - NOT advised, as will be useful to have the dates
+# in this friendly formatting available for use in plots 
+# (can't use the index, it seems... at least not easily) 
+#df.drop(['Date'], axis=1, inplace=True)
+
+# If preferred, you can override the original 'Date' column with a copy of the 
+# Timestamped index values, but since it's in a column, you can use it in plots:
+#df['Date'] = df.index # This will look like the Timestamp column
 
 print(type(df.index)) # Returns pandas.core.indexes.datetimes.DatetimeIndex
 print(df.index) # Inspect the index 
 print(df.head())
+
+
 
 # %% Sort data:
 
