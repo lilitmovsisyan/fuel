@@ -19,7 +19,7 @@ print(df.head())
 print(df.info())
 print(df.columns)
 print(df.shape)
-print(df.describe())
+print(df.describe().round(2))
 
 # %% Convert dates to Timestamp and set dates as index:
 
@@ -136,6 +136,8 @@ df_annual = df.groupby(df.index.year).agg(
         )
 # Rename the index as 'Year':
 df_annual.index.rename('Year', inplace=True)
+# Round results to 2dp:
+df_annual = df_annual.round(2)
 
 print(df_annual)
 
@@ -148,6 +150,8 @@ df_monthly = df.groupby([df.index.year, df.index.month]).agg(
         )
 # Rename the mulit-level index as 'Year' and 'Month':
 df_monthly.index.rename(['Year','Month'], inplace=True)
+# Round results to 2dp:
+df_monthly = df_monthly.round(2)
 
 print(df_monthly)
 
@@ -183,6 +187,9 @@ print(annual_totals2.columns.levels[1])
 annual_totals2.rename(level=1, columns={'mean':'mean_per_month', '<lambda>': 'monthly_avg'})
 # WHY DOESN'T THIS WORK?? No error is given, but the column is not renamed.
 
+# Round results to 2dp:
+annual_totals2 = annual_totals2.round(2) 
+
 print(annual_totals2)
 
 ### Could also try doing 2 separate DataFrames, one each for Totals, Litres, Price,
@@ -191,6 +198,12 @@ print(annual_totals2)
 annual_total_spend = df.groupby(df.index.year).agg({'Total':['sum','mean', monthly_avg()]})
 annual_litres = df.groupby(df.index.year).agg({'Litres':['sum', 'mean', monthly_avg()]})
 annual_prices = df.groupby(df.index.year).agg({'Price_pL':['sum', 'mean', monthly_avg()]})
+
+# Round results to 2dp:
+annual_total_spend = annual_total_spend.round(2)
+annual_litres = annual_litres.round(2)
+annual_prices = annual_prices.round(2)
+
 
 print(annual_total_spend)
 print(annual_litres)
