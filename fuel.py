@@ -219,12 +219,72 @@ print(annual_prices)
 ##Maybe replace them with 0s, or see if there is a way to get mean including no. of NaN??
 
 
-
-
 # %% Write to Excel:
 #
 #df_annual.to_excel("fuel_annual.xlsx")
 #df_monthly.to_excel("fuel_monthly.xlsx")
+
+# %% Graphs:
+"""
+3. Create graphs:
+    - Time v spend
+    - Time v price
+    - histogram of Litres x frequency
+    - bar chart of average price x location
+    - bar chart of average price x company
+    - histogram of prices x frequency per location
+4. Add lines/spots on the graph indicating dates I was in bristol/london or 
+on trips like Bball/Lydney/etc. 
+"""
+#-------------------------------------
+# Initial exploration (and revision!)
+
+plt.scatter(df.Litres, df.Total)
+plt.title("Litres x Total")
+plt.figure()
+
+plt.scatter(df.Total, df.Price_pL)
+plt.title("Total x Price_pL")
+plt.figure()
+
+plt.scatter(df.Price_pL, df.Litres)
+plt.title("Price_pL x Litres")
+plt.figure()
+# do this over with the 'proper' pyplot syntax (figures and axes, and add labels)
+# Or find that function that creates all permutations of scatter graphs
+
+# %% 
+#-------------------------------------
+# Prep for histograms of companies/locations and frequency of visit
+# and then comparing prices, etc:
+
+# Count number of entries:
+print(df.Company.count())
+
+# But that doesn't give you the number of unique entries,.nunique() does:
+print(df.Company.nunique())
+
+# Notice that some companies are counted as unique due to trailing whitespace:
+# Inspect names of unique companies:
+print(df.Company.unique())
+
+# Doing the same with Locations:
+print(df.Location.count())
+print(df.Location.nunique())
+print(df.Location.unique())
+
+# Remove whitespace from beginning and end of strings:
+# (uses the Python str.strip() method,therefore need to prefix with .str to tell
+# pandas to use this Python method.)
+
+df.Company = df.Company.str.strip()
+df.Location = df.Location.str.strip()
+
+print(df.Company.nunique()) # no. of unique companies reduced by 1
+print(df.Location.nunique()) # no. of unique locations as unchanged
+
+
+
 
 # %% TO DO:
 
