@@ -166,10 +166,12 @@ df_monthly = df_monthly.round(2)
 
 print(df_monthly)
 
-# %% Get Monthly Average per year:
+# %% Get Monthly Average per year (Ver 1):
 
 #(i.e. not average in each month where some spending occurred, because there 
-#were some months where no fuel was bought. That would be the following):
+#were some months where no fuel was bought.) >> how might this be computed????
+#(and also not just the mean per year: 
+#that would be annual total / no. of purchases):
 avg_spent_per_month = df.groupby([df.index.year]).Total.mean()
 
 
@@ -186,6 +188,7 @@ annual_averages['Monthly_avg'] = (annual_averages.Total)/12
 # OK THIS WORKED! I'm gonna try again but this time combine both monthly average methods:
 #-----
 
+# %% Get Monthly Average per year (Ver 2, better):
 
 def monthly_avg():
     return lambda x: x.sum()/12
@@ -195,13 +198,15 @@ annual_stats = df.groupby([df.index.year]).agg(['count','sum', 'mean', monthly_a
 #inspect column names:
 print(annual_stats.columns.levels[1])
 # somehow need to rename the '<lambda>' column!!!!!!!!!!
-annual_stats.rename(level=1, columns={'mean':'mean_per_month', '<lambda>': 'monthly_avg'})
+annual_stats.rename(level=1, columns={'mean':'mean_purchase', '<lambda>': 'monthly_avg'})
 # WHY DOESN'T THIS WORK?? No error is given, but the column is not renamed.
 
 # Round results to 2dp:
 annual_stats = annual_stats.round(2) 
 
 print(annual_stats)
+
+# %% Get Monthly Average per year (Ver 3, best):
 
 ### Could also try doing 2 separate DataFrames, one each for Totals, Litres, Price,
 #and here have the month mean and monthly average together
@@ -220,6 +225,8 @@ print(annual_total_spend)
 print(annual_litres)
 print(annual_prices)
 
+# %% ????
+
 #DRAFT
 ##or maybe:
 #monthly_totals = df.groupby([df.index.year, df.index.month]).Total.sum()
@@ -234,6 +241,7 @@ print(annual_prices)
 #
 #df_annual.to_excel("fuel_annual.xlsx")
 #df_monthly.to_excel("fuel_monthly.xlsx")
+annual_stats.to_excel("fuel_annual_stats.xlsx")
 
 # %% Graphs:
 """
@@ -250,17 +258,17 @@ on trips like Bball/Lydney/etc.
 #-------------------------------------
 # Initial exploration (and revision!)
 
-plt.scatter(df.Litres, df.Total)
-plt.title("Litres x Total")
-plt.figure()
-
-plt.scatter(df.Total, df.Price_pL)
-plt.title("Total x Price_pL")
-plt.figure()
-
-plt.scatter(df.Price_pL, df.Litres)
-plt.title("Price_pL x Litres")
-plt.figure()
+#plt.scatter(df.Litres, df.Total)
+#plt.title("Litres x Total")
+#plt.figure()
+#
+#plt.scatter(df.Total, df.Price_pL)
+#plt.title("Total x Price_pL")
+#plt.figure()
+#
+#plt.scatter(df.Price_pL, df.Litres)
+#plt.title("Price_pL x Litres")
+#plt.figure()
 # do this over with the 'proper' pyplot syntax (figures and axes, and add labels)
 # Or find that function that creates all permutations of scatter graphs
 
