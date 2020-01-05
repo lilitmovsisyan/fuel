@@ -175,13 +175,13 @@ avg_spent_per_month = df.groupby([df.index.year]).Total.mean()
 
 #Instead, we want the annual total divided by 12:
 
-annual_totals = df.groupby([df.index.year]).Total.sum()
+annual_averages = df.groupby([df.index.year]).Total.sum()
 # then add a column dividing this result by 12. REMEMBER though, this is a Series object.
 
 #Convert back to DataFrame (also automatically returns the column name):
-annual_totals = annual_totals.to_frame()
-# create a DataFrame with annual_totals as a column and another column dividing this by 12:
-annual_totals['Monthly_avg'] = (annual_totals.Total)/12
+annual_averages = annual_averages.to_frame()
+# create a DataFrame with annual_averages as a column and another column dividing this by 12:
+annual_averages['Monthly_avg'] = (annual_averages.Total)/12
 #-----
 # OK THIS WORKED! I'm gonna try again but this time combine both monthly average methods:
 #-----
@@ -190,25 +190,25 @@ annual_totals['Monthly_avg'] = (annual_totals.Total)/12
 def monthly_avg():
     return lambda x: x.sum()/12
 
-annual_totals2 = df.groupby([df.index.year]).agg(['sum', 'mean', monthly_avg()])
+annual_stats = df.groupby([df.index.year]).agg(['count','sum', 'mean', monthly_avg()])
 
 #inspect column names:
-print(annual_totals2.columns.levels[1])
+print(annual_stats.columns.levels[1])
 # somehow need to rename the '<lambda>' column!!!!!!!!!!
-annual_totals2.rename(level=1, columns={'mean':'mean_per_month', '<lambda>': 'monthly_avg'})
+annual_stats.rename(level=1, columns={'mean':'mean_per_month', '<lambda>': 'monthly_avg'})
 # WHY DOESN'T THIS WORK?? No error is given, but the column is not renamed.
 
 # Round results to 2dp:
-annual_totals2 = annual_totals2.round(2) 
+annual_stats = annual_stats.round(2) 
 
-print(annual_totals2)
+print(annual_stats)
 
 ### Could also try doing 2 separate DataFrames, one each for Totals, Litres, Price,
 #and here have the month mean and monthly average together
 #Could also calculate mean when grouped by month (this would be a separate dataFrame)
-annual_total_spend = df.groupby(df.index.year).agg({'Total':['sum','mean', monthly_avg()]})
-annual_litres = df.groupby(df.index.year).agg({'Litres':['sum', 'mean', monthly_avg()]})
-annual_prices = df.groupby(df.index.year).agg({'Price_pL':['sum', 'mean', monthly_avg()]})
+annual_total_spend = df.groupby(df.index.year).agg({'Total':['count', 'sum','mean', monthly_avg()]})
+annual_litres = df.groupby(df.index.year).agg({'Litres':['count', 'sum', 'mean', monthly_avg()]})
+annual_prices = df.groupby(df.index.year).agg({'Price_pL':['count', 'sum', 'mean', monthly_avg()]})
 
 # Round results to 2dp:
 annual_total_spend = annual_total_spend.round(2)
